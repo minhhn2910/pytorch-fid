@@ -2,7 +2,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+#jupyter planet
+.ipynb_checkpoints/
 # C extensions
 *.so
 
