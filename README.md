@@ -1,3 +1,6 @@
+# New feature: 
+  This fork supports mnist data (clone channels), with precomputed mean + cov saved in two npy files. 
+  It results in FID scores of GAN generated images at around ~80. The FID results is similar to what reported in this discussion: [StackOverflow Discussion](https://stackoverflow.com/questions/57183647/frechet-inception-distance-for-dc-gan-trained-on-mnist-dataset)
 # Fréchet Inception Distance (FID score) in PyTorch
 
 This is a port of the official implementation of [Fréchet Inception Distance](https://arxiv.org/abs/1706.08500) to PyTorch. 
