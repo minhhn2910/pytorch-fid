@@ -64,6 +64,11 @@ parser.add_argument('--dims', type=int, default=2048,
 parser.add_argument('-c', '--gpu', default='', type=str,
                     help='GPU to use (leave blank for CPU only)')
 
+parser.add_argument('--rand_data',
+                  help='This is a boolean flag.',
+                  type=eval, 
+                  choices=[True, False], 
+                  default='True')
 
 def imread(filename):
     """
@@ -196,7 +201,7 @@ def calculate_frechet_distance(mu1, sigma1, mu2, sigma2, eps=1e-6):
 
 
 
-def calculate_fid_mnist_npy(path, batch_size, cuda, dims):
+def calculate_fid_mnist_npy(path, batch_size, cuda, dims, rand_data):
     """Calculates the FID of two paths"""
     block_idx = InceptionV3.BLOCK_INDEX_BY_DIM[dims]
 
@@ -229,8 +234,20 @@ def calculate_fid_mnist_npy(path, batch_size, cuda, dims):
     s2 = np.cov(act2, rowvar=False)
     
     fid_value = calculate_frechet_distance(m1, s1, m2, s2)
+    
+    print('FID: ', fid_value)
+    if (rand_data):
+        np.random.seed()
+        rand_data = np.random.rand(*np_1[:1000].shape) #*before a tuple shape to unpack its content
+        act2 = get_activations_numpy(rand_data, model, batch_size, dims, cuda)
+        m2 = np.mean(act2, axis=0)
+        s2 = np.cov(act2, rowvar=False)
 
-    return fid_value
+        fid_value = calculate_frechet_distance(m1, s1, m2, s2)
+
+        print('FID rand data: ', fid_value)
+
+    #return fid_value
 
 def calculate_fid_mnist_test_set(path, batch_size, cuda, dims):
     """Calculates the FID of two paths"""
@@ -260,9 +277,11 @@ if __name__ == '__main__':
 #                                           args.gpu != '',
 #                                           args.dims)
                                   
-    fid_value = calculate_fid_mnist_npy(args.path,
+    calculate_fid_mnist_npy(args.path,
                                          args.batch_size,
                                          args.gpu != '',
-                                         args.dims)
+                                         args.dims,
+                                         args.rand_data
+                                       )
 
-    print('FID: ', fid_value)
+    #print('FID: ', fid_value)
